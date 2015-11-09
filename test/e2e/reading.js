@@ -1,12 +1,11 @@
 import {reduce, resolve} from "bluebird";
 import {expect} from "chai";
 import * as R from "ramda";
-import * as kinesis from "../../../lambda-mock-events/lib/mocks/kinesis.js";
-import run from "../../../lambda-mock-events/lib/run.js";
 
 import {handler} from "index";
 import * as mongodb from "common/mongodb";
 import * as utils from "../utils";
+import {getEventFromObject, run} from "../mock";
 
 describe("On sensor-reading", () => {
 
@@ -27,7 +26,7 @@ describe("On sensor-reading", () => {
     });
 
     it("creates a site-month-readings-aggregate element if it doesn't exist", () => {
-        const event = kinesis.getEventFromObject(
+        const event = getEventFromObject(
             utils.getSensor("01/01/2015 00:00:00")
         );
         return run(handler, event)
@@ -42,7 +41,7 @@ describe("On sensor-reading", () => {
     describe("fills the correct properties of the site-month-readings-aggregate", () => {
 
         it("sensor reading", () => {
-            const event = kinesis.getEventFromObject(
+            const event = getEventFromObject(
                 utils.getSensor("01/01/2015 00:00:00")
             );
             return run(handler, event)
@@ -68,7 +67,7 @@ describe("On sensor-reading", () => {
         });
 
         it("environment reading (temperature, humidity, illuminance)", () => {
-            const event = kinesis.getEventFromObject(
+            const event = getEventFromObject(
                 utils.getTemperatureHumidityIlluminance("01/01/2015 00:16:00")
             );
             return run(handler, event)
@@ -94,7 +93,7 @@ describe("On sensor-reading", () => {
         });
 
         it("environment reading (co2)", () => {
-            const event = kinesis.getEventFromObject(
+            const event = getEventFromObject(
                 utils.getCO2("01/01/2015 00:00:00")
             );
             return run(handler, event)
@@ -133,7 +132,7 @@ describe("On sensor-reading", () => {
                     utils.getCO2(date)
                 ]),
                 R.flatten,
-                R.map(kinesis.getEventFromObject)
+                R.map(getEventFromObject)
             )(dates);
             const runsPromise = reduce(
                 events,
