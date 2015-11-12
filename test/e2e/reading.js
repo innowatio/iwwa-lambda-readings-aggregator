@@ -1,6 +1,9 @@
 import {reduce, resolve} from "bluebird";
-import {expect} from "chai";
+import chai, {expect} from "chai";
+import chaiAsPromised from "chai-as-promised";
 import * as R from "ramda";
+
+chai.use(chaiAsPromised);
 
 import {handler} from "index";
 import * as mongodb from "common/mongodb";
@@ -159,6 +162,96 @@ describe("On sensor-reading", () => {
                         }
                     });
                 });
+        });
+
+    });
+
+    describe("supports different date formats", () => {
+
+        it("italian format", () => {
+            const event = getEventFromObject(
+                utils.getSensor("01/01/2015 00:16:00")
+            );
+            return run(handler, event)
+                .then(() => {
+                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                })
+                .then(aggregate => {
+                    expect(aggregate).to.deep.equal({
+                        _id: "podId-2015-01",
+                        podId: "podId",
+                        month: "2015-01",
+                        readings: {
+                            "energia attiva": ",,,0.808",
+                            "energia reattiva": ",,,-0.085",
+                            "potenza massima": ",,,0",
+                            "temperature": null,
+                            "humidity": null,
+                            "illuminance": null,
+                            "co2": null
+                        }
+                    });
+                });
+        });
+
+        it("ISO8601", () => {
+            const event = getEventFromObject(
+                utils.getSensor("2015-01-01T00:16:00.000Z")
+            );
+            return run(handler, event)
+                .then(() => {
+                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                })
+                .then(aggregate => {
+                    expect(aggregate).to.deep.equal({
+                        _id: "podId-2015-01",
+                        podId: "podId",
+                        month: "2015-01",
+                        readings: {
+                            "energia attiva": ",,,0.808",
+                            "energia reattiva": ",,,-0.085",
+                            "potenza massima": ",,,0",
+                            "temperature": null,
+                            "humidity": null,
+                            "illuminance": null,
+                            "co2": null
+                        }
+                    });
+                });
+        });
+
+        it("incorrect ISO8601", () => {
+            const event = getEventFromObject(
+                utils.getSensor("2015-01-01T00:16:000Z")
+            );
+            return run(handler, event)
+                .then(() => {
+                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                })
+                .then(aggregate => {
+                    expect(aggregate).to.deep.equal({
+                        _id: "podId-2015-01",
+                        podId: "podId",
+                        month: "2015-01",
+                        readings: {
+                            "energia attiva": ",,,0.808",
+                            "energia reattiva": ",,,-0.085",
+                            "potenza massima": ",,,0",
+                            "temperature": null,
+                            "humidity": null,
+                            "illuminance": null,
+                            "co2": null
+                        }
+                    });
+                });
+        });
+
+        it("unsupported format", () => {
+            const event = getEventFromObject(
+                utils.getSensor("2015-01-01T00:000Z")
+            );
+            const runPromise = run(handler, event);
+            return expect(runPromise).to.be.rejectedWith("Invalid date");
         });
 
     });

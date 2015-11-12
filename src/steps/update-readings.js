@@ -3,7 +3,7 @@ import moment from "moment";
 const fiveMinutesInMilliseconds = 5 * 60 * 1000;
 
 function getOffset (date) {
-    const startOfMonth = moment(date).startOf("month").valueOf();
+    const startOfMonth = moment.utc(date).startOf("month").valueOf();
     return (date - startOfMonth) / fiveMinutesInMilliseconds;
 }
 
