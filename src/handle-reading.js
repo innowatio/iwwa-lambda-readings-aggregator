@@ -1,32 +1,17 @@
-import makePipeline from "./common/make-pipeline";
-import * as mongodb from "./common/mongodb";
-import {getPodIdFromReading, convertReadingDate} from "./common/utils";
+import getSiteId from "./steps/get-site-id";
+import getAggregate from "./steps/get-aggregate";
+import parseAggregate from "./steps/parse-aggregate";
+import updateAggregate from "./steps/update-aggregate";
+import stringifyAggregate from "./steps/stringify-aggregate";
+import upsertAggregate from "./steps/upsert-aggregate";
 
-import findOrCreateElement from "./steps/find-or-create-element";
-import parseReadings from "./steps/parse-readings";
-import updateReadings from "./steps/update-readings";
-import stringifyReadings from "./steps/stringify-readings";
-import upsertElement from "./steps/upsert-element";
-
-const collection = mongodb.collection("site-month-readings-aggregates");
-const pipeline = makePipeline(
-    findOrCreateElement,
-    parseReadings,
-    updateReadings,
-    stringifyReadings,
-    upsertElement
-);
-
-function parseReading (reading) {
-    return getPodIdFromReading(reading).then(podId => ({
-        podId: podId,
-        date: convertReadingDate(reading.date),
-        measurements: reading.measurements
-    }));
-}
-
-export default function handleReading ({data}) {
-    return parseReading(data.element).then(
-        reading => pipeline(null, {collection, reading})
-    );
+export default async function handleReading (event) {
+    const reading = event.data.element;
+    const siteId = await getSiteId(reading);
+    const aggregate = await getAggregate(siteId, reading);
+    const parsedAggregate = parseAggregate(aggregate);
+    const updatedParsedAggregate = updateAggregate(parsedAggregate, reading);
+    const updatedAggregate = stringifyAggregate(updatedParsedAggregate);
+    await upsertAggregate(updatedAggregate);
+    return null;
 }

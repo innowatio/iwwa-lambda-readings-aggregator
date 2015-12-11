@@ -4,33 +4,32 @@ export function getSensor (date) {
         "data": {
             "element": {
                 "sensorId": "sensorId",
-                "podId": "podId",
                 "date": date,
                 "measurements": [
                     {
-                        "type": "energia attiva",
+                        "type": "activeEnergy",
                         "source": "reading",
                         "value": "0.808",
                         "unitOfMeasurement": "kWh"
                     },
                     {
-                        "type": "energia reattiva",
+                        "type": "reactiveEnergy",
                         "source": "reading",
                         "value": "-0.085",
                         "unitOfMeasurement": "kVArh"
                     },
                     {
-                        "type": "potenza massima",
+                        "type": "maxPower",
                         "source": "reading",
                         "value": "0.000",
                         "unitOfMeasurement": "VAr"
                     }
                 ]
             },
-            "id": "sensorReadingId"
+            "id": "electricalReadingId"
         },
         "timestamp": 1420070400000,
-        "type": "element inserted in collection sensor-readings"
+        "type": "element inserted in collection readings"
     };
 }
 
@@ -40,7 +39,6 @@ export function getTemperatureHumidityIlluminance (date) {
         "data": {
             "element": {
                 "sensorId": "sensorId",
-                "siteId": "siteId",
                 "date": date,
                 "measurements": [
                     {
@@ -66,7 +64,7 @@ export function getTemperatureHumidityIlluminance (date) {
             "id": "environmentReadingId"
         },
         "timestamp": 1420070400000,
-        "type": "element inserted in collection environment-readings"
+        "type": "element inserted in collection readings"
     };
 }
 
@@ -76,7 +74,6 @@ export function getCO2 (date) {
         "data": {
             "element": {
                 "sensorId": "sensorId",
-                "siteId": "siteId",
                 "date": date,
                 "measurements": [
                     {
@@ -87,9 +84,9 @@ export function getCO2 (date) {
                     }
                 ]
             },
-            "id": "environmentReadingId"
+            "id": "co2ReadingId"
         },
         "timestamp": 1420070400000,
-        "type": "element inserted in collection environment-readings"
+        "type": "element inserted in collection readings"
     };
 }

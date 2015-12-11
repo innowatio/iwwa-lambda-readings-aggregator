@@ -1,4 +1,4 @@
-import {reduce, resolve} from "bluebird";
+import {all, reduce, resolve} from "bluebird";
 import chai, {expect} from "chai";
 import chaiAsPromised from "chai-as-promised";
 import * as R from "ramda";
@@ -10,27 +10,25 @@ import * as mongodb from "common/mongodb";
 import * as utils from "../utils";
 import {getEventFromObject, run} from "../mock";
 
-describe("On sensor-reading", () => {
+describe("On reading", () => {
 
     const siteMonthReadingsAggregates = mongodb.collection("site-month-readings-aggregates");
-    const sitePodMappings = mongodb.collection("site-pod-mappings");
+    const sensors = mongodb.collection("sensors");
 
     beforeEach(() => {
         return resolve()
-            .then(() => (
-                siteMonthReadingsAggregates.remove({})
-            ))
-            .then(() => (
-                sitePodMappings.remove({})
-            ))
-            .then(() => (
-                sitePodMappings.insert({podId: "podId", siteId: "siteId"})
-            ));
+            .then(() => all([
+                siteMonthReadingsAggregates.remove({}),
+                sensors.remove({})
+            ]))
+            .then(() => all([
+                sensors.insert({_id: "sensorId", siteId: "siteId"})
+            ]));
     });
 
     it("creates a site-month-readings-aggregate element if it doesn't exist", () => {
         const event = getEventFromObject(
-            utils.getSensor("01/01/2015 00:00:00")
+            utils.getSensor("2015-01-01T00:02:00.000Z")
         );
         return run(handler, event)
             .then(() => {
@@ -41,29 +39,25 @@ describe("On sensor-reading", () => {
             });
     });
 
-    describe("fills the correct properties of the site-month-readings-aggregate", () => {
+    describe("fills the correct properties of the site-month-readings-aggregate:", () => {
 
-        it("sensor reading", () => {
+        it("electrical reading", () => {
             const event = getEventFromObject(
-                utils.getSensor("01/01/2015 00:00:00")
+                utils.getSensor("2015-01-01T00:00:30.000Z")
             );
             return run(handler, event)
                 .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                    return siteMonthReadingsAggregates.findOne({_id: "siteId-2015-01"});
                 })
                 .then(aggregate => {
                     expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
+                        _id: "siteId-2015-01",
+                        siteId: "siteId",
                         month: "2015-01",
-                        readings: {
-                            "energia attiva": "0.808",
-                            "energia reattiva": "-0.085",
-                            "potenza massima": "0",
-                            "temperature": null,
-                            "humidity": null,
-                            "illuminance": null,
-                            "co2": null
+                        measurements: {
+                            "activeEnergy": "0.808",
+                            "reactiveEnergy": "-0.085",
+                            "maxPower": "0"
                         }
                     });
                 });
@@ -71,25 +65,21 @@ describe("On sensor-reading", () => {
 
         it("environment reading (temperature, humidity, illuminance)", () => {
             const event = getEventFromObject(
-                utils.getTemperatureHumidityIlluminance("01/01/2015 00:16:00")
+                utils.getTemperatureHumidityIlluminance("2015-01-01T00:16:00.000Z")
             );
             return run(handler, event)
                 .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                    return siteMonthReadingsAggregates.findOne({_id: "siteId-2015-01"});
                 })
                 .then(aggregate => {
                     expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
+                        _id: "siteId-2015-01",
+                        siteId: "siteId",
                         month: "2015-01",
-                        readings: {
-                            "energia attiva": null,
-                            "energia reattiva": null,
-                            "potenza massima": null,
+                        measurements: {
                             "temperature": ",,,21.4",
                             "humidity": ",,,49",
-                            "illuminance": ",,,145",
-                            "co2": null
+                            "illuminance": ",,,145"
                         }
                     });
                 });
@@ -97,24 +87,18 @@ describe("On sensor-reading", () => {
 
         it("environment reading (co2)", () => {
             const event = getEventFromObject(
-                utils.getCO2("01/01/2015 00:00:00")
+                utils.getCO2("2015-01-01T00:00:11.000Z")
             );
             return run(handler, event)
                 .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                    return siteMonthReadingsAggregates.findOne({_id: "siteId-2015-01"});
                 })
                 .then(aggregate => {
                     expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
+                        _id: "siteId-2015-01",
+                        siteId: "siteId",
                         month: "2015-01",
-                        readings: {
-                            "energia attiva": null,
-                            "energia reattiva": null,
-                            "potenza massima": null,
-                            "temperature": null,
-                            "humidity": null,
-                            "illuminance": null,
+                        measurements: {
                             "co2": "446"
                         }
                     });
@@ -123,10 +107,10 @@ describe("On sensor-reading", () => {
 
         it("all in one", () => {
             const dates = [
-                "01/01/2015 00:00:00",
-                "01/01/2015 00:05:00",
-                "01/01/2015 00:15:00",
-                "01/01/2015 00:45:00"
+                "2015-01-01T00:00:00.000Z",
+                "2015-01-01T00:06:00.000Z",
+                "2015-01-01T00:15:00.000Z",
+                "2015-01-01T00:47:00.000Z"
             ];
             const events = R.pipe(
                 R.map(date => [
@@ -144,17 +128,17 @@ describe("On sensor-reading", () => {
             );
             return runsPromise
                 .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
+                    return siteMonthReadingsAggregates.findOne({_id: "siteId-2015-01"});
                 })
                 .then(aggregate => {
                     expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
+                        _id: "siteId-2015-01",
+                        siteId: "siteId",
                         month: "2015-01",
-                        readings: {
-                            "energia attiva": "0.808,0.808,,0.808,,,,,,0.808",
-                            "energia reattiva": "-0.085,-0.085,,-0.085,,,,,,-0.085",
-                            "potenza massima": "0,0,,0,,,,,,0",
+                        measurements: {
+                            "activeEnergy": "0.808,0.808,,0.808,,,,,,0.808",
+                            "reactiveEnergy": "-0.085,-0.085,,-0.085,,,,,,-0.085",
+                            "maxPower": "0,0,,0,,,,,,0",
                             "temperature": "21.4,21.4,,21.4,,,,,,21.4",
                             "humidity": "49,49,,49,,,,,,49",
                             "illuminance": "145,145,,145,,,,,,145",
@@ -162,96 +146,6 @@ describe("On sensor-reading", () => {
                         }
                     });
                 });
-        });
-
-    });
-
-    describe("supports different date formats", () => {
-
-        it("italian format", () => {
-            const event = getEventFromObject(
-                utils.getSensor("01/01/2015 00:16:00")
-            );
-            return run(handler, event)
-                .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
-                })
-                .then(aggregate => {
-                    expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
-                        month: "2015-01",
-                        readings: {
-                            "energia attiva": ",,,0.808",
-                            "energia reattiva": ",,,-0.085",
-                            "potenza massima": ",,,0",
-                            "temperature": null,
-                            "humidity": null,
-                            "illuminance": null,
-                            "co2": null
-                        }
-                    });
-                });
-        });
-
-        it("ISO8601", () => {
-            const event = getEventFromObject(
-                utils.getSensor("2015-01-01T00:16:00.000Z")
-            );
-            return run(handler, event)
-                .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
-                })
-                .then(aggregate => {
-                    expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
-                        month: "2015-01",
-                        readings: {
-                            "energia attiva": ",,,0.808",
-                            "energia reattiva": ",,,-0.085",
-                            "potenza massima": ",,,0",
-                            "temperature": null,
-                            "humidity": null,
-                            "illuminance": null,
-                            "co2": null
-                        }
-                    });
-                });
-        });
-
-        it("incorrect ISO8601", () => {
-            const event = getEventFromObject(
-                utils.getSensor("2015-01-01T00:16:000Z")
-            );
-            return run(handler, event)
-                .then(() => {
-                    return siteMonthReadingsAggregates.findOne({_id: "podId-2015-01"});
-                })
-                .then(aggregate => {
-                    expect(aggregate).to.deep.equal({
-                        _id: "podId-2015-01",
-                        podId: "podId",
-                        month: "2015-01",
-                        readings: {
-                            "energia attiva": ",,,0.808",
-                            "energia reattiva": ",,,-0.085",
-                            "potenza massima": ",,,0",
-                            "temperature": null,
-                            "humidity": null,
-                            "illuminance": null,
-                            "co2": null
-                        }
-                    });
-                });
-        });
-
-        it("unsupported format", () => {
-            const event = getEventFromObject(
-                utils.getSensor("2015-01-01T00:000Z")
-            );
-            const runPromise = run(handler, event);
-            return expect(runPromise).to.be.rejectedWith("Invalid date");
         });
 
     });
