@@ -8,6 +8,7 @@
     "url": "https://github.com/innowatio/iwwa-lambda-readings-aggregator.git"
   },
   "dependencies": {
+    "babel": "^5.8.29",
     "bluebird": "^3.0.5",
     "dotenv": "^1.2.0",
     "kinesis-router": "^1.2.1",
