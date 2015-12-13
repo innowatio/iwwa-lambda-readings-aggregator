@@ -13,16 +13,16 @@ import {getEventFromObject, run} from "../mock";
 describe("On reading", () => {
 
     const siteMonthReadingsAggregates = mongodb.collection("site-month-readings-aggregates");
-    const sensors = mongodb.collection("sensors");
+    const sites = mongodb.collection("sites");
 
     beforeEach(() => {
         return resolve()
             .then(() => all([
                 siteMonthReadingsAggregates.remove({}),
-                sensors.remove({})
+                sites.remove({})
             ]))
             .then(() => all([
-                sensors.insert({_id: "sensorId", siteId: "siteId"})
+                sites.insert({_id: "siteId", sensorIds: ["sensorId"]})
             ]));
     });
 
