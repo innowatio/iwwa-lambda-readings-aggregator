@@ -4,7 +4,7 @@ import {collection} from "../common/mongodb";
 export default function getSiteId (reading) {
     return collection(config.SITES_COLLECTION_NAME)
         .findOne({
-            sensorIds: {
+            sensorsIds: {
                 $in: [reading.sensorId]
             }
         })

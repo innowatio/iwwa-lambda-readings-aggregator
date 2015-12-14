@@ -22,7 +22,7 @@ describe("On reading", () => {
                 sites.remove({})
             ]))
             .then(() => all([
-                sites.insert({_id: "siteId", sensorIds: ["sensorId"]})
+                sites.insert({_id: "siteId", sensorsIds: ["sensorId"]})
             ]));
     });
 
