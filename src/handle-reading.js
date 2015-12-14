@@ -8,6 +8,9 @@ import upsertAggregate from "./steps/upsert-aggregate";
 export default async function handleReading (event) {
     const reading = event.data.element;
     const siteId = await getSiteId(reading);
+    if (!siteId) {
+        return null;
+    }
     const aggregate = await getAggregate(siteId, reading);
     const parsedAggregate = parseAggregate(aggregate);
     const updatedParsedAggregate = updateAggregate(parsedAggregate, reading);

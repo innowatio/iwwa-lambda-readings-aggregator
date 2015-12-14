@@ -8,5 +8,5 @@ export default function getSiteId (reading) {
                 $in: [reading.sensorId]
             }
         })
-        .then(site => site._id);
+        .then(site => site && site._id);
 }
