@@ -1,30 +1,23 @@
 import moment from "moment";
 import {is} from "ramda";
 
-const fiveMinutesInMilliseconds = 5 * 60 * 1000;
+import {MEASUREMENTS_DELTA_IN_MS} from "../common/config";
 
 function convertReadingDate (dateString) {
-    const date = moment.utc(dateString, moment.ISO_8601, true);
-    const minute = date.get("minute");
-    const previousFifthMinute = minute - (minute % 5);
-    // Notice: the `set` method mutates `date`
-    date.set({
-        minute: previousFifthMinute,
-        second: 0,
-        millisecond: 0
-    });
-    return date.valueOf();
+    const dateInMs = moment.utc(dateString, moment.ISO_8601, true).valueOf();
+    return dateInMs - (dateInMs % MEASUREMENTS_DELTA_IN_MS);
 }
 
 function getOffset (reading) {
     const date = convertReadingDate(reading.date);
     const startOfMonth = moment.utc(date).startOf("month").valueOf();
-    return (date - startOfMonth) / fiveMinutesInMilliseconds;
+    return (date - startOfMonth) / MEASUREMENTS_DELTA_IN_MS;
 }
 
 function updateMeasurement (aggregateMeasurement, offset, value) {
     const measurement = (
         is(Array, aggregateMeasurement) ?
+        // Clone the array to avoid modifying it
         aggregateMeasurement.slice(0) :
         []
     );

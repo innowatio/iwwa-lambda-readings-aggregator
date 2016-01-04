@@ -1,10 +1,9 @@
-import * as config from "../common/config";
-import {collection} from "../common/mongodb";
+import {AGGREGATES_COLLECTION_NAME} from "../common/config";
+import mongodb from "../common/mongodb";
 
-const aggregates = collection(config.AGGREGATES_COLLECTION_NAME);
-
-export default function upsertAggregate (aggregate) {
-    return aggregates.update(
+export default async function upsertAggregate (aggregate) {
+    const db = await mongodb;
+    return db.collection(AGGREGATES_COLLECTION_NAME).update(
         {_id: aggregate._id},
         aggregate,
         {upsert: true}
