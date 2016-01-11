@@ -10,8 +10,8 @@ function convertReadingDate (dateString) {
 
 function getOffset (reading) {
     const date = convertReadingDate(reading.date);
-    const startOfMonth = moment.utc(date).startOf("month").valueOf();
-    return (date - startOfMonth) / MEASUREMENTS_DELTA_IN_MS;
+    const startOfDay = moment.utc(date).startOf("day").valueOf();
+    return (date - startOfDay) / MEASUREMENTS_DELTA_IN_MS;
 }
 
 function updateMeasurement (aggregateMeasurement, offset, value) {

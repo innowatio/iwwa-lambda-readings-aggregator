@@ -135,6 +135,44 @@ describe("On reading", async () => {
             });
         });
 
+        it("non-first day of the month [1/2]", async () => {
+            const db = await mongodb;
+            const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
+            const event = getEventFromObject(
+                utils.getCO2("2015-01-02T00:00:11.000Z")
+            );
+            await run(handler, event);
+            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-02"});
+            expect(aggregate).to.deep.equal({
+                _id: "sensorId-2015-01-02",
+                sensorId: "sensorId",
+                day: "2015-01-02",
+                measurements: {
+                    "co2": "446"
+                },
+                measurementsDeltaInMs: 300000
+            });
+        });
+
+        it("non-first day of the month [2/2]", async () => {
+            const db = await mongodb;
+            const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
+            const event = getEventFromObject(
+                utils.getCO2("2015-01-03T00:51:51.000Z")
+            );
+            await run(handler, event);
+            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-03"});
+            expect(aggregate).to.deep.equal({
+                _id: "sensorId-2015-01-03",
+                sensorId: "sensorId",
+                day: "2015-01-03",
+                measurements: {
+                    "co2": ",,,,,,,,,,446"
+                },
+                measurementsDeltaInMs: 300000
+            });
+        });
+
     });
 
 });
