@@ -20,11 +20,22 @@ describe("On reading", async () => {
         await aggregates.remove({});
     });
 
-    it("creates an aggregate element if it doesn't exist", async () => {
+    it("creates two aggregate (reading and forecast) element if it doesn't exist", async () => {
         const db = await mongodb;
         const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
         const event = getEventFromObject(
             utils.getSensor("2015-01-01T00:02:00.000Z")
+        );
+        await run(handler, event);
+        const count = await aggregates.count({});
+        expect(count).to.equal(2);
+    });
+
+    it("creates an aggregate (reading) element if it doesn't exist", async () => {
+        const db = await mongodb;
+        const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
+        const event = getEventFromObject(
+            utils.getTemperatureHumidityIlluminance("2015-01-01T00:02:00.000Z")
         );
         await run(handler, event);
         const count = await aggregates.count({});
@@ -40,15 +51,35 @@ describe("On reading", async () => {
                 utils.getSensor("2015-01-01T00:00:30.000Z")
             );
             await run(handler, event);
-            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-01"});
+            const aggregate = await aggregates.findOne({_id: "reading-sensorId-2015-01-01"});
             expect(aggregate).to.deep.equal({
-                _id: "sensorId-2015-01-01",
+                _id: "reading-sensorId-2015-01-01",
+                source: "reading",
                 sensorId: "sensorId",
                 day: "2015-01-01",
                 measurements: {
                     "activeEnergy": "0.808",
-                    "reactiveEnergy": "-0.085",
                     "maxPower": "0"
+                },
+                measurementsDeltaInMs: 300000
+            });
+        });
+
+        it("electrical forecast", async () => {
+            const db = await mongodb;
+            const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
+            const event = getEventFromObject(
+                utils.getSensor("2015-01-01T00:00:30.000Z")
+            );
+            await run(handler, event);
+            const aggregate = await aggregates.findOne({_id: "forecast-sensorId-2015-01-01"});
+            expect(aggregate).to.deep.equal({
+                _id: "forecast-sensorId-2015-01-01",
+                source: "forecast",
+                sensorId: "sensorId",
+                day: "2015-01-01",
+                measurements: {
+                    "reactiveEnergy": "-0.085"
                 },
                 measurementsDeltaInMs: 300000
             });
@@ -61,10 +92,33 @@ describe("On reading", async () => {
                 utils.getTemperatureHumidityIlluminance("2015-01-01T00:16:00.000Z")
             );
             await run(handler, event);
-            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-01"});
+            const aggregate = await aggregates.findOne({_id: "reading-sensorId-2015-01-01"});
             expect(aggregate).to.deep.equal({
-                _id: "sensorId-2015-01-01",
+                _id: "reading-sensorId-2015-01-01",
                 sensorId: "sensorId",
+                source: "reading",
+                day: "2015-01-01",
+                measurements: {
+                    "temperature": ",,,21.4",
+                    "humidity": ",,,49",
+                    "illuminance": ",,,145"
+                },
+                measurementsDeltaInMs: 300000
+            });
+        });
+
+        it("environment forecast (temperature, humidity, illuminance)", async () => {
+            const db = await mongodb;
+            const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
+            const event = getEventFromObject(
+                utils.getTemperatureHumidityIlluminanceForecast("2015-01-01T00:16:00.000Z")
+            );
+            await run(handler, event);
+            const aggregate = await aggregates.findOne({_id: "forecast-sensorId-2015-01-01"});
+            expect(aggregate).to.deep.equal({
+                _id: "forecast-sensorId-2015-01-01",
+                sensorId: "sensorId",
+                source: "forecast",
                 day: "2015-01-01",
                 measurements: {
                     "temperature": ",,,21.4",
@@ -82,10 +136,11 @@ describe("On reading", async () => {
                 utils.getCO2("2015-01-01T00:00:11.000Z")
             );
             await run(handler, event);
-            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-01"});
+            const aggregate = await aggregates.findOne({_id: "reading-sensorId-2015-01-01"});
             expect(aggregate).to.deep.equal({
-                _id: "sensorId-2015-01-01",
+                _id: "reading-sensorId-2015-01-01",
                 sensorId: "sensorId",
+                source: "reading",
                 day: "2015-01-01",
                 measurements: {
                     "co2": "446"
@@ -117,19 +172,30 @@ describe("On reading", async () => {
                 (ignore, event) => run(handler, event),
                 resolve()
             );
-            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-01"});
-            expect(aggregate).to.deep.equal({
-                _id: "sensorId-2015-01-01",
+            const aggregateReading = await aggregates.findOne({_id: "reading-sensorId-2015-01-01"});
+            const aggregateForecast = await aggregates.findOne({_id: "forecast-sensorId-2015-01-01"});
+            expect(aggregateReading).to.deep.equal({
+                _id: "reading-sensorId-2015-01-01",
                 sensorId: "sensorId",
+                source: "reading",
                 day: "2015-01-01",
                 measurements: {
                     "activeEnergy": "0.808,0.808,,0.808,,,,,,0.808",
-                    "reactiveEnergy": "-0.085,-0.085,,-0.085,,,,,,-0.085",
                     "maxPower": "0,0,,0,,,,,,0",
                     "temperature": "21.4,21.4,,21.4,,,,,,21.4",
                     "humidity": "49,49,,49,,,,,,49",
                     "illuminance": "145,145,,145,,,,,,145",
                     "co2": "446,446,,446,,,,,,446"
+                },
+                measurementsDeltaInMs: 300000
+            });
+            expect(aggregateForecast).to.deep.equal({
+                _id: "forecast-sensorId-2015-01-01",
+                sensorId: "sensorId",
+                source: "forecast",
+                day: "2015-01-01",
+                measurements: {
+                    "reactiveEnergy": "-0.085,-0.085,,-0.085,,,,,,-0.085"
                 },
                 measurementsDeltaInMs: 300000
             });
@@ -142,10 +208,11 @@ describe("On reading", async () => {
                 utils.getCO2("2015-01-02T00:00:11.000Z")
             );
             await run(handler, event);
-            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-02"});
+            const aggregate = await aggregates.findOne({_id: "reading-sensorId-2015-01-02"});
             expect(aggregate).to.deep.equal({
-                _id: "sensorId-2015-01-02",
+                _id: "reading-sensorId-2015-01-02",
                 sensorId: "sensorId",
+                source: "reading",
                 day: "2015-01-02",
                 measurements: {
                     "co2": "446"
@@ -161,10 +228,11 @@ describe("On reading", async () => {
                 utils.getCO2("2015-01-03T00:51:51.000Z")
             );
             await run(handler, event);
-            const aggregate = await aggregates.findOne({_id: "sensorId-2015-01-03"});
+            const aggregate = await aggregates.findOne({_id: "reading-sensorId-2015-01-03"});
             expect(aggregate).to.deep.equal({
-                _id: "sensorId-2015-01-03",
+                _id: "reading-sensorId-2015-01-03",
                 sensorId: "sensorId",
+                source: "reading",
                 day: "2015-01-03",
                 measurements: {
                     "co2": ",,,,,,,,,,446"

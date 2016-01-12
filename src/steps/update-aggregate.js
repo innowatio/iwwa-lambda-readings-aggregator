@@ -1,5 +1,5 @@
 import moment from "moment";
-import {is} from "ramda";
+import {is, filter, partial} from "ramda";
 
 import {MEASUREMENTS_DELTA_IN_MS} from "../common/config";
 
@@ -26,9 +26,8 @@ function updateMeasurement (aggregateMeasurement, offset, value) {
     return measurement;
 }
 
-function updateMeasurements (aggregate, reading) {
-    const offset = getOffset(reading);
-    return reading.measurements.reduce((aggregateMeasurements, readingMeasurement) => {
+function updateMeasurements (aggregate, measurements, offset) {
+    return measurements.reduce((aggregateMeasurements, readingMeasurement) => {
         const {type, value} = readingMeasurement;
         return {
             ...aggregateMeasurements,
@@ -37,9 +36,15 @@ function updateMeasurements (aggregate, reading) {
     }, aggregate.measurements);
 }
 
-export default function updateAggregate (aggregate, reading) {
+function filterCriteria (source, measurement) {
+    return measurement.source === source;
+}
+
+export default function updateAggregate (aggregate, reading, source) {
+    const offset = getOffset(reading);
+    const measurementsBySource = filter(partial(filterCriteria, [source]), reading.measurements);
     return {
         ...aggregate,
-        measurements: updateMeasurements(aggregate, reading)
+        measurements: updateMeasurements(aggregate, measurementsBySource, offset)
     };
 }

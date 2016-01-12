@@ -14,7 +14,7 @@ export function getSensor (date) {
                     },
                     {
                         "type": "reactiveEnergy",
-                        "source": "reading",
+                        "source": "forecast",
                         "value": "-0.085",
                         "unitOfMeasurement": "kVArh"
                     },
@@ -56,6 +56,41 @@ export function getTemperatureHumidityIlluminance (date) {
                     {
                         "type": "illuminance",
                         "source": "reading",
+                        "value": "145",
+                        "unitOfMeasurement": "Lux"
+                    }
+                ]
+            },
+            "id": "environmentReadingId"
+        },
+        "timestamp": 1420070400000,
+        "type": "element inserted in collection readings"
+    };
+}
+
+export function getTemperatureHumidityIlluminanceForecast (date) {
+    return {
+        "id": "eventId",
+        "data": {
+            "element": {
+                "sensorId": "sensorId",
+                "date": date,
+                "measurements": [
+                    {
+                        "type": "temperature",
+                        "source": "forecast",
+                        "value": "21.4",
+                        "unitOfMeasurement": "�C"
+                    },
+                    {
+                        "type": "humidity",
+                        "source": "forecast",
+                        "value": "49",
+                        "unitOfMeasurement": "%"
+                    },
+                    {
+                        "type": "illuminance",
+                        "source": "forecast",
                         "value": "145",
                         "unitOfMeasurement": "Lux"
                     }
