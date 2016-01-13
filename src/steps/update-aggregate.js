@@ -42,7 +42,9 @@ function filterCriteria (source, measurement) {
 
 export default function updateAggregate (aggregate, reading, source) {
     const offset = getOffset(reading);
-    const measurementsBySource = filter(partial(filterCriteria, [source]), reading.measurements);
+    const measurementsBySource = reading.source ?
+        reading.measurements :
+        filter(partial(filterCriteria, [source]), reading.measurements);
     return {
         ...aggregate,
         measurements: updateMeasurements(aggregate, measurementsBySource, offset)

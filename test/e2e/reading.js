@@ -85,6 +85,30 @@ describe("On reading", async () => {
             });
         });
 
+        it("source type outside measurements", async () => {
+            const db = await mongodb;
+            const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
+            const event = getEventFromObject(
+                utils.getSensorWithSingleSource(
+                    "2015-01-01T00:02:00.000Z",
+                    "reading"
+                ));
+            await run(handler, event);
+            const aggregate = await aggregates.findOne({_id: "reading-sensorId-2015-01-01"});
+            expect(aggregate).to.deep.equal({
+                _id: "reading-sensorId-2015-01-01",
+                source: "reading",
+                sensorId: "sensorId",
+                day: "2015-01-01",
+                measurements: {
+                    "activeEnergy": "1",
+                    "reactiveEnergy": "2",
+                    "maxPower": "-3"
+                },
+                measurementsDeltaInMs: 300000
+            });
+        });
+
         it("environment reading (temperature, humidity, illuminance)", async () => {
             const db = await mongodb;
             const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);

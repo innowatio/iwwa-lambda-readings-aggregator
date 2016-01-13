@@ -33,6 +33,39 @@ export function getSensor (date) {
     };
 }
 
+export function getSensorWithSingleSource (date, source) {
+    return {
+        "id": "eventId",
+        "data": {
+            "element": {
+                "sensorId": "sensorId",
+                "date": date,
+                "source": source,
+                "measurements": [
+                    {
+                        "type": "activeEnergy",
+                        "value": "1",
+                        "unitOfMeasurement": "kWh"
+                    },
+                    {
+                        "type": "reactiveEnergy",
+                        "value": "2",
+                        "unitOfMeasurement": "kVArh"
+                    },
+                    {
+                        "type": "maxPower",
+                        "value": "-3",
+                        "unitOfMeasurement": "VAr"
+                    }
+                ]
+            },
+            "id": "electricalReadingId"
+        },
+        "timestamp": 1420070400000,
+        "type": "element inserted in collection readings"
+    };
+}
+
 export function getTemperatureHumidityIlluminance (date) {
     return {
         "id": "eventId",

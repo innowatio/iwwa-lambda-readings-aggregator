@@ -39,6 +39,6 @@ we need to define the above variables with their name prefixed by
 
 ### Run test
 
-In order to run tests locally a MongoDB instance and a MONGODB_URL environment
+In order to run tests locally a MongoDB instance and a `MONGODB_URL` environment
 param are needed.
 Then, just run `npm run test` command.
