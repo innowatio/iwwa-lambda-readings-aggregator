@@ -9,6 +9,7 @@ gulp.task("deploy", function () {
 
 gulp.task("test", function () {
     const bin = "./node_modules/.bin";
+    // a mongod instance and an env.MONGODB_URL param are needed
     execSync(`${bin}/babel-node ${bin}/isparta cover ${bin}/_mocha -- --recursive`, {
         env: {
             ...process.env,
