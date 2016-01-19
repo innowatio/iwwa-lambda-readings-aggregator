@@ -1,5 +1,17 @@
-export function getSensor (date) {
-    return {
+function addSource (reading, source, measurementLevel) {
+    if (measurementLevel) {
+        reading.data.element.measurements.forEach(measurement => {
+            measurement.source = source;
+        });
+        return reading;
+    } else {
+        reading.data.element.source = source;
+        return reading;
+    }
+}
+
+export function getActiveEnergyReactiveEnergyMaxPower (date, source, measurementLevelSource) {
+    return addSource({
         "id": "eventId",
         "data": {
             "element": {
@@ -8,19 +20,16 @@ export function getSensor (date) {
                 "measurements": [
                     {
                         "type": "activeEnergy",
-                        "source": "reading",
                         "value": "0.808",
                         "unitOfMeasurement": "kWh"
                     },
                     {
                         "type": "reactiveEnergy",
-                        "source": "forecast",
                         "value": "-0.085",
                         "unitOfMeasurement": "kVArh"
                     },
                     {
                         "type": "maxPower",
-                        "source": "reading",
                         "value": "0.000",
                         "unitOfMeasurement": "VAr"
                     }
@@ -30,44 +39,11 @@ export function getSensor (date) {
         },
         "timestamp": 1420070400000,
         "type": "element inserted in collection readings"
-    };
+    }, source, measurementLevelSource);
 }
 
-export function getSensorWithSingleSource (date, source) {
-    return {
-        "id": "eventId",
-        "data": {
-            "element": {
-                "sensorId": "sensorId",
-                "date": date,
-                "source": source,
-                "measurements": [
-                    {
-                        "type": "activeEnergy",
-                        "value": "1",
-                        "unitOfMeasurement": "kWh"
-                    },
-                    {
-                        "type": "reactiveEnergy",
-                        "value": "2",
-                        "unitOfMeasurement": "kVArh"
-                    },
-                    {
-                        "type": "maxPower",
-                        "value": "-3",
-                        "unitOfMeasurement": "VAr"
-                    }
-                ]
-            },
-            "id": "electricalReadingId"
-        },
-        "timestamp": 1420070400000,
-        "type": "element inserted in collection readings"
-    };
-}
-
-export function getTemperatureHumidityIlluminance (date) {
-    return {
+export function getTemperatureHumidityIlluminance (date, source, measurementLevelSource) {
+    return addSource({
         "id": "eventId",
         "data": {
             "element": {
@@ -76,19 +52,16 @@ export function getTemperatureHumidityIlluminance (date) {
                 "measurements": [
                     {
                         "type": "temperature",
-                        "source": "reading",
                         "value": "21.4",
-                        "unitOfMeasurement": "�C"
+                        "unitOfMeasurement": "°C"
                     },
                     {
                         "type": "humidity",
-                        "source": "reading",
                         "value": "49",
                         "unitOfMeasurement": "%"
                     },
                     {
                         "type": "illuminance",
-                        "source": "reading",
                         "value": "145",
                         "unitOfMeasurement": "Lux"
                     }
@@ -98,46 +71,11 @@ export function getTemperatureHumidityIlluminance (date) {
         },
         "timestamp": 1420070400000,
         "type": "element inserted in collection readings"
-    };
+    }, source, measurementLevelSource);
 }
 
-export function getTemperatureHumidityIlluminanceForecast (date) {
-    return {
-        "id": "eventId",
-        "data": {
-            "element": {
-                "sensorId": "sensorId",
-                "date": date,
-                "measurements": [
-                    {
-                        "type": "temperature",
-                        "source": "forecast",
-                        "value": "21.4",
-                        "unitOfMeasurement": "�C"
-                    },
-                    {
-                        "type": "humidity",
-                        "source": "forecast",
-                        "value": "49",
-                        "unitOfMeasurement": "%"
-                    },
-                    {
-                        "type": "illuminance",
-                        "source": "forecast",
-                        "value": "145",
-                        "unitOfMeasurement": "Lux"
-                    }
-                ]
-            },
-            "id": "environmentReadingId"
-        },
-        "timestamp": 1420070400000,
-        "type": "element inserted in collection readings"
-    };
-}
-
-export function getCO2 (date) {
-    return {
+export function getCO2 (date, source, measurementLevelSource) {
+    return addSource({
         "id": "eventId",
         "data": {
             "element": {
@@ -146,7 +84,6 @@ export function getCO2 (date) {
                 "measurements": [
                     {
                         "type": "co2",
-                        "source": "reading",
                         "value": "446",
                         "unitOfMeasurement": "ppm"
                     }
@@ -156,5 +93,5 @@ export function getCO2 (date) {
         },
         "timestamp": 1420070400000,
         "type": "element inserted in collection readings"
-    };
+    }, source, measurementLevelSource);
 }

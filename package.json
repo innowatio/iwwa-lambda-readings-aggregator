@@ -34,10 +34,11 @@
   },
   "scripts": {
     "codecov": "codecov",
-    "test": "gulp test",
-    "lint": "gulp lint",
+    "coverage": "NODE_ENV=test NODE_PATH=src babel-node $(npm bin)/isparta cover $(npm bin)/_mocha -- --recursive",
+    "test": "NODE_ENV=test NODE_PATH=src mocha --compilers 'js:babel/register' --recursive",
+    "lint": "eslint src test",
     "deploy": "gulp deploy",
-    "dev": "gulp"
+    "dev": "npm test -- --watch"
   },
   "author": "Team Wattellina <wattellina@mondora.com>",
   "license": "Apache-2.0"

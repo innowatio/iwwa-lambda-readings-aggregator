@@ -1,8 +1,6 @@
-import {map} from "ramda";
-
-function parseMeasurement (measurement) {
-    return measurement !== null ? (
-        measurement
+function parseMeasurementValues (measurementValues) {
+    return measurementValues !== null ? (
+        measurementValues
             .split(",")
             .map(value => parseFloat(value))
             .map(value => isNaN(value) ? null : value)
@@ -12,6 +10,6 @@ function parseMeasurement (measurement) {
 export default function parseAggregate (aggregate) {
     return {
         ...aggregate,
-        measurements: map(parseMeasurement, aggregate.measurements)
+        measurementValues: parseMeasurementValues(aggregate.measurementValues)
     };
 }

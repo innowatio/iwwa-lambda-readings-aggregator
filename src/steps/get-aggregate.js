@@ -6,29 +6,33 @@ import {
 } from "../common/config";
 import mongodb from "../common/mongodb";
 
-function getDayFromReading (reading) {
-    return moment.utc(reading.date, moment.ISO_8601, true).format("YYYY-MM-DD");
+function getDayFromReading (date) {
+    return moment.utc(date, moment.ISO_8601, true).format("YYYY-MM-DD");
 }
 
-function getAggregateId (reading, source) {
-    return `${source}-${reading.sensorId}-${getDayFromReading(reading)}`;
+function getAggregateId (reading) {
+    const {sensorId, date, source, measurementType} = reading;
+    return `${sensorId}-${getDayFromReading(date)}-${source}-${measurementType}`;
 }
 
-function getDefaultAggregate (reading, source) {
+function getDefaultAggregate (reading) {
+    const {sensorId, date, source, measurementType, unitOfMeasurement} = reading;
     return {
-        _id: getAggregateId(reading, source),
-        sensorId: reading.sensorId,
+        _id: getAggregateId(reading),
+        day: getDayFromReading(date),
+        sensorId,
         source,
-        day: getDayFromReading(reading),
-        measurements: {},
+        measurementType,
+        measurementValues: null,
+        unitOfMeasurement,
         measurementsDeltaInMs: MEASUREMENTS_DELTA_IN_MS
     };
 }
 
-export default async function getAggregate (reading, source) {
+export default async function getAggregate (reading) {
     const db = await mongodb;
     const aggregate = await db
         .collection(AGGREGATES_COLLECTION_NAME)
-        .findOne({_id: getAggregateId(reading, source)});
-    return aggregate || getDefaultAggregate(reading, source);
+        .findOne({_id: getAggregateId(reading)});
+    return aggregate || getDefaultAggregate(reading);
 }
