@@ -29,7 +29,7 @@ function getDefaultAggregate (reading) {
     };
 }
 
-export default async function getAggregate (reading) {
+export default async function getOrCreateAggregate (reading) {
     const db = await mongodb;
     const aggregate = await db
         .collection(AGGREGATES_COLLECTION_NAME)

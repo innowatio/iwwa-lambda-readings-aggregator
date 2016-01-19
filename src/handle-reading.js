@@ -2,8 +2,7 @@ import assert from "assert";
 import {map} from "bluebird";
 import {is, path} from "ramda";
 
-// TODO naming
-import getAggregate from "./steps/get-aggregate";
+import getOrCreateAggregate from "./steps/get-or-create-aggregate";
 import parseAggregate from "./steps/parse-aggregate";
 import updateAggregate from "./steps/update-aggregate";
 import stringifyAggregate from "./steps/stringify-aggregate";
@@ -19,8 +18,7 @@ function getReadingSource (reading) {
     return source;
 }
 
-// TODO naming
-function unpackReading (reading) {
+function spreadReadingByMeasurementType (reading) {
     const source = getReadingSource(reading);
     return reading.measurements.map(measurement => ({
         sensorId: reading.sensorId,
@@ -32,9 +30,8 @@ function unpackReading (reading) {
     }));
 }
 
-// TODO naming
-async function aggregatePipeline (reading) {
-    const aggregate = await getAggregate(reading);
+async function updateAggregateWithReading (reading) {
+    const aggregate = await getOrCreateAggregate(reading);
     const parsedAggregate = parseAggregate(aggregate);
     const updatedParsedAggregate = updateAggregate(parsedAggregate, reading);
     const updatedAggregate = stringifyAggregate(updatedParsedAggregate);
@@ -43,7 +40,7 @@ async function aggregatePipeline (reading) {
 
 export default async function handleReading (event) {
     const rawReading = event.data.element;
-    const readings = unpackReading(rawReading);
-    await map(readings, aggregatePipeline);
+    const readings = spreadReadingByMeasurementType(rawReading);
+    await map(readings, updateAggregateWithReading);
     return null;
 }
