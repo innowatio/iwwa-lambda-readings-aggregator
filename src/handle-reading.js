@@ -40,6 +40,14 @@ async function updateAggregateWithReading (reading) {
 
 export default async function handleReading (event) {
     const rawReading = event.data.element;
+    /*
+    *   Workaround: some events have been incorrectly generated and thus don't
+    *   have an `element` property. When processing said events, just return and
+    *   move on without failing, as failures can block the kinesis stream.
+    */
+    if (!rawReading) {
+        return null;
+    }
     const readings = spreadReadingByMeasurementType(rawReading);
     await map(readings, updateAggregateWithReading);
     return null;
