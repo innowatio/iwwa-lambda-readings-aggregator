@@ -73,7 +73,7 @@ describe("On reading", async () => {
                 measurementType: "activeEnergy",
                 unitOfMeasurement: "kWh",
                 measurementValues: "0.808",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate2 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-maxPower"});
             expect(aggregate2).to.deep.equal({
@@ -84,7 +84,7 @@ describe("On reading", async () => {
                 measurementType: "maxPower",
                 unitOfMeasurement: "VAr",
                 measurementValues: "0",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate3 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-reactiveEnergy"});
             expect(aggregate3).to.deep.equal({
@@ -95,7 +95,7 @@ describe("On reading", async () => {
                 measurementType: "reactiveEnergy",
                 unitOfMeasurement: "kVArh",
                 measurementValues: "-0.085",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
         });
 
@@ -113,7 +113,7 @@ describe("On reading", async () => {
                 measurementType: "activeEnergy",
                 unitOfMeasurement: "kWh",
                 measurementValues: "0.808",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate2 = await aggregates.findOne({_id: "sensorId-2015-01-01-forecast-maxPower"});
             expect(aggregate2).to.deep.equal({
@@ -124,7 +124,7 @@ describe("On reading", async () => {
                 measurementType: "maxPower",
                 unitOfMeasurement: "VAr",
                 measurementValues: "0",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate3 = await aggregates.findOne({_id: "sensorId-2015-01-01-forecast-reactiveEnergy"});
             expect(aggregate3).to.deep.equal({
@@ -135,7 +135,7 @@ describe("On reading", async () => {
                 measurementType: "reactiveEnergy",
                 unitOfMeasurement: "kVArh",
                 measurementValues: "-0.085",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
         });
 
@@ -153,7 +153,7 @@ describe("On reading", async () => {
                 measurementType: "activeEnergy",
                 unitOfMeasurement: "kWh",
                 measurementValues: "0.808",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate2 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-maxPower"});
             expect(aggregate2).to.deep.equal({
@@ -164,7 +164,7 @@ describe("On reading", async () => {
                 measurementType: "maxPower",
                 unitOfMeasurement: "VAr",
                 measurementValues: "0",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate3 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-reactiveEnergy"});
             expect(aggregate3).to.deep.equal({
@@ -175,7 +175,7 @@ describe("On reading", async () => {
                 measurementType: "reactiveEnergy",
                 unitOfMeasurement: "kVArh",
                 measurementValues: "-0.085",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
         });
 
@@ -193,7 +193,7 @@ describe("On reading", async () => {
                 measurementType: "activeEnergy",
                 unitOfMeasurement: "kWh",
                 measurementValues: "0.808",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate2 = await aggregates.findOne({_id: "sensorId-2015-01-01-forecast-maxPower"});
             expect(aggregate2).to.deep.equal({
@@ -204,7 +204,7 @@ describe("On reading", async () => {
                 measurementType: "maxPower",
                 unitOfMeasurement: "VAr",
                 measurementValues: "0",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
             const aggregate3 = await aggregates.findOne({_id: "sensorId-2015-01-01-forecast-reactiveEnergy"});
             expect(aggregate3).to.deep.equal({
@@ -215,7 +215,7 @@ describe("On reading", async () => {
                 measurementType: "reactiveEnergy",
                 unitOfMeasurement: "kVArh",
                 measurementValues: "-0.085",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070430000"
             });
         });
 
@@ -231,9 +231,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "activeEnergy",
-                measurementValues: ",,,0.808",
+                measurementValues: "0.808",
                 unitOfMeasurement: "kWh",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420071360000"
             });
             const aggregate2 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-reactiveEnergy"});
             expect(aggregate2).to.deep.equal({
@@ -242,9 +242,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "reactiveEnergy",
-                measurementValues: ",,,-0.085",
+                measurementValues: "-0.085",
                 unitOfMeasurement: "kVArh",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420071360000"
             });
             const aggregate3 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-maxPower"});
             expect(aggregate3).to.deep.equal({
@@ -253,9 +253,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "maxPower",
-                measurementValues: ",,,0",
+                measurementValues: "0",
                 unitOfMeasurement: "VAr",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420071360000"
             });
         });
 
@@ -271,9 +271,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "temperature",
-                measurementValues: ",,,21.4",
+                measurementValues: "21.4",
                 unitOfMeasurement: "°C",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420071360000"
             });
             const aggregate2 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-humidity"});
             expect(aggregate2).to.deep.equal({
@@ -282,9 +282,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "humidity",
-                measurementValues: ",,,49",
+                measurementValues: "49",
                 unitOfMeasurement: "%",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420071360000"
             });
             const aggregate3 = await aggregates.findOne({_id: "sensorId-2015-01-01-reading-illuminance"});
             expect(aggregate3).to.deep.equal({
@@ -293,9 +293,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "illuminance",
-                measurementValues: ",,,145",
+                measurementValues: "145",
                 unitOfMeasurement: "Lux",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420071360000"
             });
         });
 
@@ -313,7 +313,7 @@ describe("On reading", async () => {
                 measurementType: "co2",
                 measurementValues: "446",
                 unitOfMeasurement: "ppm",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070411000"
             });
         });
 
@@ -351,9 +351,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "activeEnergy",
-                measurementValues: "0.808,0.808,,0.808,,,,,,0.808",
+                measurementValues: "0.808,0.808,0.808,0.808",
                 unitOfMeasurement: "kWh",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
             expect(aggregateReadingReactiveEnergy).to.deep.equal({
                 _id: "sensorId-2015-01-01-reading-reactiveEnergy",
@@ -361,9 +361,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "reactiveEnergy",
-                measurementValues: "-0.085,-0.085,,-0.085,,,,,,-0.085",
+                measurementValues: "-0.085,-0.085,-0.085,-0.085",
                 unitOfMeasurement: "kVArh",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
             expect(aggregateReadingMaxPower).to.deep.equal({
                 _id: "sensorId-2015-01-01-reading-maxPower",
@@ -371,9 +371,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "maxPower",
-                measurementValues: "0,0,,0,,,,,,0",
+                measurementValues: "0,0,0,0",
                 unitOfMeasurement: "VAr",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
             expect(aggregateReadingTemperature).to.deep.equal({
                 _id: "sensorId-2015-01-01-reading-temperature",
@@ -381,9 +381,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "temperature",
-                measurementValues: "21.4,21.4,,21.4,,,,,,21.4",
+                measurementValues: "21.4,21.4,21.4,21.4",
                 unitOfMeasurement: "°C",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
             expect(aggregateReadingHumidity).to.deep.equal({
                 _id: "sensorId-2015-01-01-reading-humidity",
@@ -391,9 +391,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "humidity",
-                measurementValues: "49,49,,49,,,,,,49",
+                measurementValues: "49,49,49,49",
                 unitOfMeasurement: "%",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
             expect(aggregateReadingIlluminance).to.deep.equal({
                 _id: "sensorId-2015-01-01-reading-illuminance",
@@ -401,9 +401,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "illuminance",
-                measurementValues: "145,145,,145,,,,,,145",
+                measurementValues: "145,145,145,145",
                 unitOfMeasurement: "Lux",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
             expect(aggregateReadingCo2).to.deep.equal({
                 _id: "sensorId-2015-01-01-reading-co2",
@@ -411,9 +411,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-01",
                 measurementType: "co2",
-                measurementValues: "446,446,,446,,,,,,446",
+                measurementValues: "446,446,446,446",
                 unitOfMeasurement: "ppm",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420070401000,1420070760000,1420071300000,1420073220000"
             });
         });
 
@@ -431,7 +431,7 @@ describe("On reading", async () => {
                 day: "2015-01-02",
                 measurementValues: "446",
                 unitOfMeasurement: "ppm",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420156811000"
             });
         });
 
@@ -449,9 +449,9 @@ describe("On reading", async () => {
                 source: "reading",
                 day: "2015-01-03",
                 measurementType: "co2",
-                measurementValues: ",,,,,,,,,,446",
+                measurementValues: "446",
                 unitOfMeasurement: "ppm",
-                measurementsDeltaInMs: 300000
+                measurementTimes: "1420246311000"
             });
         });
 

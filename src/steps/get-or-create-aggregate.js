@@ -1,8 +1,7 @@
 import moment from "moment";
 
 import {
-    AGGREGATES_COLLECTION_NAME,
-    MEASUREMENTS_DELTA_IN_MS
+    AGGREGATES_COLLECTION_NAME
 } from "../common/config";
 import mongodb from "../common/mongodb";
 
@@ -24,8 +23,8 @@ function getDefaultAggregate (reading) {
         source,
         measurementType,
         measurementValues: null,
-        unitOfMeasurement,
-        measurementsDeltaInMs: MEASUREMENTS_DELTA_IN_MS
+        measurementTimes: null,
+        unitOfMeasurement
     };
 }
 
