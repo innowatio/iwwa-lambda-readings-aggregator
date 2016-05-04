@@ -9,22 +9,7 @@ Lambda function to aggregate readings.
 
 ## Deployment
 
-### Continuous deployment
-
-Since the project uses TravisCI and
-[`lambda-deploy`](https://github.com/innowatio/lambda-deploy/) for continuous
-deployment, the following environment variables need to be set:
-
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_ACCESS_KEY_ID`
-- `AWS_DEFAULT_REGION`
-- `S3_BUCKET`
-- `LAMBDA_NAME`
-- `LAMBDA_ROLE_ARN`
-
-WARNING: the value of those variables must be kept secret. Do not set them in
-the `.travis.yml` config file, only in the Travis project's settings (where they
-are kept secret).
+This project deployment is automated with Lambdafile [`lambda-boilerplate`](https://github.com/lk-architecture/lambda-boilerplate/).
 
 ### Configuration
 
