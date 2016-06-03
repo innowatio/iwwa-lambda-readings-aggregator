@@ -1,16 +1,16 @@
 import moment from "moment";
 
 export default function updateAggregate (aggregate, reading) {
-    var value = parseFloat(reading.measurementValue);
-    var time = moment.utc(reading.date).valueOf();
+    const value = parseFloat(reading.measurementValue);
+    const time = moment.utc(reading.date).valueOf();
 
-    var filteredMeasurements = aggregate.measurements.filter(x => x.time != time);
-    var updatedMeasurements = [...filteredMeasurements, {
+    const filteredMeasurements = aggregate.measurements.filter(x => x.time != time);
+    const updatedMeasurements = [...filteredMeasurements, {
         value,
         time
     }];
 
-    var sortedMeasurements = updatedMeasurements.sort((x, y) => x.time > y.time);
+    const sortedMeasurements = updatedMeasurements.sort((x, y) => x.time - y.time);
 
     return {
         _id: aggregate._id,

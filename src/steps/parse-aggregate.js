@@ -7,17 +7,17 @@ function parse (measure, parseFunc) {
 }
 
 export default function parseAggregate (aggregate) {
-    var measurementValues = parse(aggregate.measurementValues, parseFloat);
-    var measurementTimes = parse(aggregate.measurementTimes, parseInt);
-    var measurements = measurementValues.map((value, index) => {
+    const measurementValues = parse(aggregate.measurementValues, parseFloat);
+    const measurementTimes = parse(aggregate.measurementTimes, parseInt);
+    const measurements = measurementValues.map((value, index) => {
         return {
-            value: value,
+            value,
             time: measurementTimes[index]
         };
-    }).sort((x, y) => x.time > y.time);
-    
+    }).sort((x, y) => x.time - y.time);
+
     return {
         ...aggregate,
-        measurements 
+        measurements
     };
 }
