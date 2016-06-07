@@ -2,7 +2,6 @@ import assert from "assert";
 import {map} from "bluebird";
 import {is, path} from "ramda";
 
-import log from "./common/logger";
 import getOrCreateAggregate from "./steps/get-or-create-aggregate";
 import parseAggregate from "./steps/parse-aggregate";
 import updateAggregate from "./steps/update-aggregate";
