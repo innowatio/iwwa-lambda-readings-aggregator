@@ -40,7 +40,6 @@ async function updateAggregateWithReading (reading) {
 }
 
 export default async function handleReading (event) {
-    log.info(event, "event");
     const rawReading = event.data.element;
     /*
     *   Workaround: some events have been incorrectly generated and thus don't
