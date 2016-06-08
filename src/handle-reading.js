@@ -2,7 +2,6 @@ import assert from "assert";
 import {map} from "bluebird";
 import {is, path} from "ramda";
 
-import log from "./common/logger";
 import getOrCreateAggregate from "./steps/get-or-create-aggregate";
 import parseAggregate from "./steps/parse-aggregate";
 import updateAggregate from "./steps/update-aggregate";
@@ -40,7 +39,6 @@ async function updateAggregateWithReading (reading) {
 }
 
 export default async function handleReading (event) {
-    log.info(event, "event");
     const rawReading = event.data.element;
     /*
     *   Workaround: some events have been incorrectly generated and thus don't
