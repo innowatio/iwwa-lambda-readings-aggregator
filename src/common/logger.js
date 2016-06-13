@@ -1,3 +1,3 @@
 import bunyan from "bunyan";
 
-export default bunyan.createLogger({name: "readings-virtual-aggregator"});
+export default bunyan.createLogger({name: "readings-aggregator"});
