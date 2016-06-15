@@ -45,7 +45,11 @@ export default async function handleReading (event) {
     *   have an `element` property. When processing said events, just return and
     *   move on without failing, as failures can block the kinesis stream.
     */
-    if (!rawReading) {
+    if (!rawReading ||
+        !rawReading.sensorId ||
+        !rawReading.date,
+        !rawReading.measurements ||
+        !(rawReading.source || path(["measurements", "0", "source"], rawReading))) {
         return null;
     }
     const readings = spreadReadingByMeasurementType(rawReading);
