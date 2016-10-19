@@ -6,7 +6,7 @@ import R from "ramda";
 chai.use(chaiAsPromised);
 
 import {handler} from "index";
-import mongodb from "common/mongodb";
+import {getMongoClient} from "common/mongodb";
 import {AGGREGATES_COLLECTION_NAME} from "common/config";
 import * as utils from "../utils";
 import {getEventFromObject, run} from "../mock";
@@ -16,7 +16,7 @@ describe("On reading", async () => {
     var aggregates;
     var db;
     before(async () => {
-        db = await mongodb;
+        db = await getMongoClient();
         aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
     });
     after(async () => {
@@ -439,7 +439,7 @@ describe("On reading", async () => {
         });
 
         it("non-first day of the month [CASE: 2/2 (only testing different combinations)]", async () => {
-            const db = await mongodb;
+            const db = await getMongoClient();
             const aggregates = db.collection(AGGREGATES_COLLECTION_NAME);
             const event = getEventFromObject(
                 utils.getCO2("2015-01-03T00:51:51.000Z", "reading")
