@@ -26,6 +26,120 @@ describe("On reading", async () => {
         await aggregates.remove({});
     });
 
+    describe("ignore invalid event", () => {
+        it("with NaN or invalid measurements", async () => {
+
+            const event = getEventFromObject({
+                "id": "eventId",
+                "data": {
+                    "element": {
+                        "sensorId": "sensorId",
+                        "date": "2015-01-01T00:02:00.000Z",
+                        "source": "reading",
+                        "measurements": [
+                            {
+                                "type": "activeEnergy",
+                                "value": NaN,
+                                "unitOfMeasurement": "kWh"
+                            },
+                            {
+                                "type": "reactiveEnergy",
+                                "value": NaN,
+                                "unitOfMeasurement": "kVArh"
+                            },
+                            {
+                                "type": "maxPower",
+                                "value": NaN,
+                                "unitOfMeasurement": "VAr"
+                            }
+                        ]
+                    },
+                    "id": "electricalReadingId"
+                },
+                "timestamp": 1420070400000,
+                "type": "element inserted in collection readings"
+            }
+            );
+
+            await run(handler, event);
+            const count = await aggregates.count({});
+            expect(count).to.equal(0);
+        });
+
+    });
+
+    describe("clean aggregate data", () => {
+        it("with NaN or invalid data", async () => {
+            await aggregates.insert([{
+                _id: "sensorId-2015-01-01-reading-activeEnergy",
+                day: "2015-01-01",
+                sensorId: "sensorId",
+                source: "reading",
+                measurementType: "activeEnergy",
+                unitOfMeasurement: "kWh",
+                measurementValues: "NaN",
+                measurementTimes: "1420070520000"
+            }, {
+                _id: "sensorId-2015-01-01-reading-reactiveEnergy",
+                day: "2015-01-01",
+                sensorId: "sensorId",
+                source: "reading",
+                measurementType: "reactiveEnergy",
+                unitOfMeasurement: "kVArh",
+                measurementValues: "NaN",
+                measurementTimes: "1420070520000"
+            }, {
+                _id: "sensorId-2015-01-01-reading-maxPower",
+                day: "2015-01-01",
+                sensorId: "sensorId",
+                source: "reading",
+                measurementType: "maxPower",
+                unitOfMeasurement: "VAr",
+                measurementValues: "NaN",
+                measurementTimes: "1420070520000"
+            }]);
+
+            const event = getEventFromObject(
+                utils.getActiveEnergyReactiveEnergyMaxPower("2015-01-01T00:04:00.000Z", "reading")
+            );
+            await run(handler, event);
+            const count = await aggregates.count({});
+            expect(count).to.equal(3);
+
+            const saved = await aggregates.find({}).toArray();
+            expect(saved).to.be.deep.equal([{
+                _id: "sensorId-2015-01-01-reading-activeEnergy",
+                day: "2015-01-01",
+                sensorId: "sensorId",
+                source: "reading",
+                measurementType: "activeEnergy",
+                unitOfMeasurement: "kWh",
+                measurementValues: "0.808",
+                measurementTimes: "1420070640000"
+            },
+            {
+                _id: "sensorId-2015-01-01-reading-reactiveEnergy",
+                day: "2015-01-01",
+                sensorId: "sensorId",
+                source: "reading",
+                measurementType: "reactiveEnergy",
+                unitOfMeasurement: "kVArh",
+                measurementValues: "-0.085",
+                measurementTimes: "1420070640000"
+            },
+            {
+                _id: "sensorId-2015-01-01-reading-maxPower",
+                day: "2015-01-01",
+                sensorId: "sensorId",
+                source: "reading",
+                measurementType: "maxPower",
+                unitOfMeasurement: "VAr",
+                measurementValues: "0",
+                measurementTimes: "1420070640000"
+            }]);
+        });
+    });
+
     describe("creates an aggregate for each measurement in the reading (assuming measurements all have different type-s)", () => {
 
         it("reading with `activeEnergy`, `reactiveEnergy` and `maxPower` measurements", async () => {

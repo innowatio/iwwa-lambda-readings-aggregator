@@ -14,7 +14,7 @@ export default function parseAggregate (aggregate) {
             value,
             time: measurementTimes[index]
         };
-    }).sort((x, y) => x.time - y.time);
+    }).filter(x => !isNaN(parseFloat(x.value))).sort((x, y) => x.time - y.time);
 
     return {
         ...aggregate,

@@ -38,6 +38,11 @@ async function updateAggregateWithReading (reading) {
     return upsertAggregate(updatedAggregate);
 }
 
+function skipReading (reading) {
+    const filtered = reading.measurements.filter(x => isNaN(parseFloat(x.value)));
+    return filtered.length > 0 ? true : false;
+}
+
 export default async function handleReading (event) {
     const rawReading = event.data.element;
     /*
@@ -49,7 +54,7 @@ export default async function handleReading (event) {
         !rawReading.sensorId ||
         !rawReading.date,
         !rawReading.measurements ||
-        !(rawReading.source || path(["measurements", "0", "source"], rawReading))) {
+        !(rawReading.source || path(["measurements", "0", "source"], rawReading)) || skipReading(rawReading)) {
         return null;
     }
     const readings = spreadReadingByMeasurementType(rawReading);
