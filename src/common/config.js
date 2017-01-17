@@ -6,3 +6,4 @@ export const MONGODB_URL = process.env.MONGODB_URL || "mongodb://localhost:27017
 export const AGGREGATES_COLLECTION_NAME = process.env.AGGREGATES_COLLECTION_NAME || "readings-daily-aggregates";
 export const SITES_COLLECTION_NAME = "sites";
 export const DEBUG = process.env.DEBUG;
+export const LOG_LEVEL = process.env.LOG_LEVEL || "info";
